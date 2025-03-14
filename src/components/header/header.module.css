@@ -13,6 +13,9 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    button:hover {
+        background-color: transparent;
+    }
 }
 
 .logo img {
@@ -22,6 +25,7 @@
 .nav ul {
     list-style: none;
     display: flex;
+    
     gap: 24px;
     margin: 0;
     padding: 0;
@@ -46,9 +50,6 @@
 
 .burger {
     display: none; /* Hide by default */    
-    button:hover {
-        background-color: red !important;
-    }
 }
 
 /* Show only on mobile screens */
@@ -74,7 +75,7 @@
         justify-items: center;
         gap: 16px;
         position: absolute;
-        top: 60px;
+        padding-top: 60px;
         left: 0;
         width: 100%;
         background-color: var(--exodus-navy-blue);
@@ -82,12 +83,23 @@
         transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
         opacity: 0;
         transform: translateY(-10px);
+        ul {
+            list-style: none;
+            display: grid; /* Updated to grid for vertical layout */
+            gap: 24px;
+            margin: 0;
+            padding: 0;
+        }
     }
 
     /* When menuOpen is true, show navigation */
     .navOpen {
-        display: flex;
+        display: grid; /* Updated to grid for vertical layout */
+        grid-template-rows: repeat(auto-fit, minmax(40px, auto));
+        justify-items: center;
+        gap: 16px;
         opacity: 1;
         transform: translateY(0);
+        
     }
 }
