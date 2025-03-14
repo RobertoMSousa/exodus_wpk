@@ -1,0 +1,93 @@
+.header {
+    background-color: #0A0B17;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo img {
+    height: 32px;
+}
+
+.nav ul {
+    list-style: none;
+    display: flex;
+    gap: 24px;
+    margin: 0;
+    padding: 0;
+}
+
+.nav ul li {
+    position: relative;
+}
+
+.nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 8px 12px;
+}
+
+.nav ul li a:hover {
+    color: #8B63FB;
+}
+
+
+.burger {
+    display: none; /* Hide by default */    
+    button:hover {
+        background-color: red !important;
+    }
+}
+
+/* Show only on mobile screens */
+@media (max-width: 768px) {
+    .burger {
+        display: block;
+        font-size: 28px;
+        background: none;
+        border: none;
+        color: var(--exodus-text-color);
+        cursor: pointer;
+        z-index: 10;
+        transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;   
+    }
+
+    /* Rotate the burger menu to 'X' */
+    .burgerOpen {
+        transform: rotate(90deg);
+    }
+    .nav {
+        display: grid;
+        grid-template-rows: repeat(auto-fit, minmax(40px, auto));
+        justify-items: center;
+        gap: 16px;
+        position: absolute;
+        top: 60px;
+        left: 0;
+        width: 100%;
+        background-color: var(--exodus-navy-blue);
+        padding: 16px;
+        transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    /* When menuOpen is true, show navigation */
+    .navOpen {
+        display: flex;
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

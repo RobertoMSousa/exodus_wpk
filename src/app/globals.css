@@ -1,0 +1,76 @@
+/* Global Styles for Web3 Developer Dashboard */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Exodus Brand Colors */
+:root {
+    --exodus-purple: #8B63FB;
+    --exodus-light-blue: #91C4EA;
+    --exodus-dark-blue: #2C68F4;
+    --exodus-navy-blue: #0A0B17;
+    --exodus-text-color: #ffffff;
+    --exodus-background-color: #13141F;
+    --exodus-gray: #2C2F44;
+    --exodus-soft-purple: #A892FF;
+    --exodus-hover-blue: #5671E6;
+    --exodus-border-gray: #3D3F54;
+}
+
+/* Custom Styles */
+body {
+  font-family: 'Inter', sans-serif;
+  color: var(--exodus-text-color);
+  /* background-color: var(--exodus-background-color); */
+
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    color: var(--exodus-soft-purple);
+}
+
+button {
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: all 0.3s;
+    background-color: var(--exodus-purple);
+    color: white;
+}
+
+button:hover {
+    background-color: var(--exodus-hover-blue);
+    opacity: 0.9;
+}
+
+/* Primary Button */
+.btn-primary {
+    color: white;
+    background-color: var(--exodus-purple);
+}
+
+/* Secondary Button */
+.btn-secondary {
+    color: #1a202c;
+    background-color: var(--exodus-light-blue);
+}
+
+/* Input Fields */
+input, select {
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--exodus-border-gray);
+    border-radius: 0.5rem;
+    outline: none;
+    background-color: var(--exodus-gray);
+    color: var(--exodus-text-color);
+}
+
+/* Card Style */
+.card {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    border-radius: 1rem;
+    padding: 1rem;
+    background-color: var(--exodus-navy-blue);
+    color: var(--exodus-light-blue);
+}
