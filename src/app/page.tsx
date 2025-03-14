@@ -1,6 +1,8 @@
 import Header from "../components/header/header";
 import Hero from "../components/hero/hero";
 import Features from "../components/features/features";
+import CTA from "../components/cta/cta"
+import WalletConnection from "../components/wallet/WalletConnection"
 
 export default function Home() {
   return (
@@ -9,6 +11,8 @@ export default function Home() {
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
         <Hero />
         <Features />
+        <CTA />
+        <WalletConnection />
       </main>
     </div>
   );

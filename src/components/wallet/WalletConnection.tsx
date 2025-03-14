@@ -1,0 +1,72 @@
+"use client";
+import { useState } from "react";
+import styles from "./WalletConnection.module.css";
+import * as secp256k1 from "@noble/secp256k1"; // For cryptographic key generation
+import { ethers } from "ethers"; // For Ethereum wallet generation
+
+export default function WalletConnection() {
+    const [walletAddress, setWalletAddress] = useState<string | null>(null);
+
+    // Function to create a passkey and derive a wallet
+    const generatePasskeyWallet = async () => {
+        try {
+            // Step 1: Generate a new WebAuthn Credential (Passkey)
+            const credential = await navigator.credentials.create({
+                publicKey: {
+                    challenge: new Uint8Array(32), // Random challenge
+                    rp: { name: "Exodus Web3" },
+                    user: {
+                        id: new Uint8Array(16),
+                        name: "user@example.com",
+                        displayName: "User",
+                    },
+                    pubKeyCredParams: [{ type: "public-key", alg: -7 }], // ECDSA with SHA-256
+                    authenticatorSelection: { userVerification: "preferred" },
+                },
+            });
+
+            if (!credential) throw new Error("Failed to create credential");
+
+            // Step 2: Extract Public Key from Credential
+            const publicKey = credential.response.getPublicKey();
+            if (!publicKey) throw new Error("Public key generation failed");
+
+            // Step 3: Derive a Private Key (Simulating Passkey-Based Wallet Generation)
+            const privateKey = secp256k1.utils.randomPrivateKey();
+            const privateKeyHex = Buffer.from(privateKey).toString("hex");
+
+            // Step 4: Generate an Ethereum Wallet from the Derived Private Key
+            const wallet = new ethers.Wallet(privateKeyHex);
+            setWalletAddress(wallet.address);
+
+            console.log("Generated Wallet Address:", wallet.address);
+        } catch (error) {
+            console.error("Error generating passkey wallet:", error);
+        }
+    };
+
+    // Function to disconnect the wallet
+    const disconnectWallet = () => {
+        setWalletAddress(null);
+    };
+
+    return (
+        <div className={styles.walletContainer}>
+            {!walletAddress ? (
+                <>
+                    <h3>🔑 Generate a Wallet with Passkeys</h3>
+                    <button className={styles.generateButton} onClick={generatePasskeyWallet}>
+                        Generate Wallet
+                    </button>
+                </>
+            ) : (
+                <>
+                    <p className={styles.walletAddress}>✅ Wallet: {walletAddress}</p>
+                    <button className={styles.disconnectButton} onClick={disconnectWallet}>
+                        Disconnect Wallet
+                    </button>
+                </>
+            )}
+        </div>
+    );
+}

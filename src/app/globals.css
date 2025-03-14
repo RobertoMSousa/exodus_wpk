@@ -10,18 +10,19 @@
     --exodus-dark-blue: #2C68F4;
     --exodus-navy-blue: #0A0B17;
     --exodus-text-color: #ffffff;
-    --exodus-background-color: #13141F;
+    --exodus-background-color: #000;
     --exodus-gray: #2C2F44;
     --exodus-soft-purple: #A892FF;
     --exodus-hover-blue: #5671E6;
     --exodus-border-gray: #3D3F54;
+    --exodus-white: #fff
 }
 
 /* Custom Styles */
 body {
   font-family: 'Inter', sans-serif;
-  color: var(--exodus-text-color);
-  /* background-color: var(--exodus-background-color); */
+  /* color: var(--exodus-text-color); */
+  background-color: var(--exodus-background-color);
 
 }
 
@@ -36,7 +37,7 @@ button {
     font-weight: 600;
     transition: all 0.3s;
     background-color: var(--exodus-purple);
-    color: white;
+    color: var(--exodus-white);
 }
 
 button:hover {
@@ -46,7 +47,7 @@ button:hover {
 
 /* Primary Button */
 .btn-primary {
-    color: white;
+    color: var(--exodus-white);
     background-color: var(--exodus-purple);
 }
 
