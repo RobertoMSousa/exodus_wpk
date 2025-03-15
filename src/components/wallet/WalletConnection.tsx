@@ -6,10 +6,17 @@ import { ethers } from "ethers"; // For Ethereum wallet generation
 
 export default function WalletConnection() {
     const [walletAddress, setWalletAddress] = useState<string | null>(null);
+    const [showModal, setShowModal] = useState<boolean>(false);
+    const [email, setEmail] = useState<string>("");
+    const [displayName, setDisplayName] = useState<string>("");
 
     // Function to create a passkey and derive a wallet
     const generatePasskeyWallet = async () => {
         try {
+            if (!email || !displayName) {
+                throw new Error("Email and Display Name are required.");
+            }
+
             // Step 1: Generate a new WebAuthn Credential (Passkey)
             const credential = await navigator.credentials.create({
                 publicKey: {
@@ -17,8 +24,8 @@ export default function WalletConnection() {
                     rp: { name: "Exodus Web3" },
                     user: {
                         id: new Uint8Array(16),
-                        name: "user@example.com",
-                        displayName: "User",
+                        name: email,
+                        displayName: displayName,
                     },
                     pubKeyCredParams: [{ type: "public-key", alg: -7 }], // ECDSA with SHA-256
                     authenticatorSelection: { userVerification: "preferred" },
@@ -40,6 +47,7 @@ export default function WalletConnection() {
             setWalletAddress(wallet.address);
 
             console.log("Generated Wallet Address:", wallet.address);
+            setShowModal(false);
         } catch (error) {
             console.error("Error generating passkey wallet:", error);
         }
@@ -55,7 +63,7 @@ export default function WalletConnection() {
             {!walletAddress ? (
                 <>
                     <h3>🔑 Generate a Wallet with Passkeys</h3>
-                    <button className={styles.generateButton} onClick={generatePasskeyWallet}>
+                    <button className={styles.generateButton} onClick={() => setShowModal(true)}>
                         Generate Wallet
                     </button>
                 </>
@@ -66,6 +74,34 @@ export default function WalletConnection() {
                         Disconnect Wallet
                     </button>
                 </>
+            )}
+
+            {showModal && (
+                <div className={styles.modal}>
+                    <div className={styles.modalContent}>
+                        <h3>Enter Your Details</h3>
+                        <input
+                            type="email"
+                            placeholder="Email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className={styles.inputField}
+                        />
+                        <input
+                            type="text"
+                            placeholder="Display Name"
+                            value={displayName}
+                            onChange={(e) => setDisplayName(e.target.value)}
+                            className={styles.inputField}
+                        />
+                        <button className={styles.modalButton} onClick={generatePasskeyWallet}>
+                            Create Wallet
+                        </button>
+                        <button className={styles.closeButton} onClick={() => setShowModal(false)}>
+                            Cancel
+                        </button>
+                    </div>
+                </div>
             )}
         </div>
     );
