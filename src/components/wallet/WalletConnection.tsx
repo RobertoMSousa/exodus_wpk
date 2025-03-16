@@ -61,25 +61,13 @@ export default function WalletConnection() {
             const hashedPasskey = sha256(new Uint8Array(passkey));
             const privateKeyHex = Buffer.from(hashedPasskey).toString("hex").slice(0, 64);
 
-            // 🔹 Generate Ethereum Wallet
             const ethWallet = new ethers.Wallet(privateKeyHex);
-
-            // 🔹 Generate Bitcoin Wallet
             const keyPair = ECPair.fromPrivateKey(Buffer.from(privateKeyHex, "hex"), { compressed: true });
-
-            // Ensure the public key is properly formatted
             const pubkeyBuffer = Buffer.from(keyPair.publicKey);
 
             const { address: btcAddress } = payments.p2wpkh({ pubkey: pubkeyBuffer });
-
-            // 🔹 Convert private key to Bitcoin WIF format
             const btcPrivateKeyWIF = bs58check.encode(Buffer.concat([Buffer.from([0x80]), keyPair.privateKey!]));
 
-            console.log("ETH Wallet Address:", ethWallet.address);
-            console.log("BTC Wallet Address:", btcAddress);
-            console.log("BTC Private Key (WIF):", btcPrivateKeyWIF);
-
-            // Store both ETH & BTC addresses
             setWalletAddress({ eth: ethWallet.address, btc: btcAddress });
             setPrivateKey({ eth: privateKeyHex, btc: btcPrivateKeyWIF });
 
