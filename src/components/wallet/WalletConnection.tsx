@@ -8,6 +8,8 @@ import ImportPasskey from "./ImportPasskey"; // Import ImportPasskey component
 
 export default function WalletConnection() {
     const [walletAddress, setWalletAddress] = useState<string | null>(null);
+    const [privateKey, setPrivateKey] = useState<string | null>(null);
+    const [showPrivateKey, setShowPrivateKey] = useState<boolean>(false);
     const [showModal, setShowModal] = useState<boolean>(false);
     const [passkeyExists, setPasskeyExists] = useState<boolean>(false);
     const [email, setEmail] = useState<string>("");
@@ -50,6 +52,7 @@ export default function WalletConnection() {
             // Generate Ethereum Wallet from the Derived Private Key
             const wallet = new ethers.Wallet(privateKeyHex);
             setWalletAddress(wallet.address);
+            setPrivateKey(privateKeyHex);
 
             console.log("Wallet Address (from passkey):", wallet.address);
         } catch (error) {
@@ -111,6 +114,8 @@ export default function WalletConnection() {
     // Function to disconnect the wallet
     const disconnectWallet = () => {
         setWalletAddress(null);
+        setPrivateKey(null);
+        setShowPrivateKey(false);
     };
 
     return (
@@ -132,6 +137,18 @@ export default function WalletConnection() {
             ) : (
                 <>
                     <p className={styles.walletAddress}>✅ Wallet: {walletAddress}</p>
+
+                    {/* Export Private Key Button */}
+                    <button className={styles.exportPrivateKeyButton} onClick={() => setShowPrivateKey(!showPrivateKey)}>
+                        {showPrivateKey ? "Hide Private Key" : "Export Private Key"}
+                    </button>
+
+                    {showPrivateKey && (
+                        <p className={styles.privateKey}>
+                            🔑 Private Key: <span>{privateKey}</span>
+                        </p>
+                    )}
+
                     <button className={styles.disconnectButton} onClick={disconnectWallet}>
                         Disconnect Wallet
                     </button>
