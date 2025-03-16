@@ -31,7 +31,6 @@ export default function WalletConnection() {
         checkExistingPasskey();
     }, []);
 
-    // Function to check for an existing passkey
     const checkExistingPasskey = async () => {
         try {
             const credential = await navigator.credentials.get({
@@ -55,7 +54,6 @@ export default function WalletConnection() {
         }
     };
 
-    // Function to generate Ethereum and Bitcoin wallets from passkey
     const generateWalletFromPasskey = async (passkey: ArrayBuffer) => {
         try {
             const hashedPasskey = sha256(new Uint8Array(passkey));
@@ -76,7 +74,6 @@ export default function WalletConnection() {
         }
     };
 
-    // Function to log in with an existing passkey
     const loginWithPasskey = async () => {
         try {
             const credential = await navigator.credentials.get({
@@ -96,7 +93,7 @@ export default function WalletConnection() {
         }
     };
 
-    // Function to create a new passkey and derive wallets
+
     const generatePasskeyWallet = async () => {
         try {
             if (!email || !displayName) {
