@@ -70,9 +70,6 @@ export default function WalletConnection() {
             // Ensure the public key is properly formatted
             const pubkeyBuffer = Buffer.from(keyPair.publicKey);
 
-            console.log("🚀  roberto --  ~ generateWalletFromPasskey ~ keyPair:", keyPair);
-            console.log("🚀  roberto --  ~ generateWalletFromPasskey ~ pubkey:", pubkeyBuffer);
-
             const { address: btcAddress } = payments.p2wpkh({ pubkey: pubkeyBuffer });
 
             // 🔹 Convert private key to Bitcoin WIF format
