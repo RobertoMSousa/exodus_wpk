@@ -12,10 +12,14 @@
     "@noble/secp256k1": "^2.2.3",
     "@passkeys/core": "^3.3.6",
     "@passkeys/react": "^2.5.3",
+    "bitcoinjs-lib": "^6.1.7",
+    "bs58check": "^4.0.0",
+    "ecpair": "^3.0.0",
     "ethers": "^6.13.5",
     "next": "15.2.2",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "tiny-secp256k1": "^2.2.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

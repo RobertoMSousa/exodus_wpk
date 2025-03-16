@@ -3,13 +3,25 @@ import { useState, useEffect } from "react";
 import styles from "./WalletConnection.module.css";
 import { ethers } from "ethers";
 import { sha256 } from "@noble/hashes/sha256";
+import { payments } from "bitcoinjs-lib";
+import ECPairFactory from "ecpair";
+import * as ecc from "tiny-secp256k1";
+import bs58check from 'bs58check'
 import ImportPasskey from "./ImportPasskey";
-import ExportWallet from "./ExportWallet"
+import ExportWallet from "./ExportWallet";
 import WalletModal from "./WalletModal";
 
+const ECPair = ECPairFactory(ecc);
+
 export default function WalletConnection() {
-    const [walletAddress, setWalletAddress] = useState<string | null>(null);
-    const [privateKey, setPrivateKey] = useState<string | null>(null);
+    const [walletAddress, setWalletAddress] = useState<{ eth: string | null; btc: string | null }>({
+        eth: null,
+        btc: null,
+    });
+    const [privateKey, setPrivateKey] = useState<{ eth: string | null; btc: string | null }>({
+        eth: null,
+        btc: null,
+    });
     const [showModal, setShowModal] = useState<boolean>(false);
     const [passkeyExists, setPasskeyExists] = useState<boolean>(false);
     const [email, setEmail] = useState<string>("");
@@ -19,12 +31,11 @@ export default function WalletConnection() {
         checkExistingPasskey();
     }, []);
 
-    // Function to check for an existing passkey and load the wallet if available
     const checkExistingPasskey = async () => {
         try {
             const credential = await navigator.credentials.get({
                 publicKey: {
-                    challenge: new Uint8Array(32), // Random challenge
+                    challenge: new Uint8Array(32),
                     rpId: window.location.hostname,
                     userVerification: "preferred",
                 },
@@ -43,24 +54,26 @@ export default function WalletConnection() {
         }
     };
 
-    // Function to generate a deterministic wallet from the passkey
     const generateWalletFromPasskey = async (passkey: ArrayBuffer) => {
         try {
             const hashedPasskey = sha256(new Uint8Array(passkey));
             const privateKeyHex = Buffer.from(hashedPasskey).toString("hex").slice(0, 64);
 
-            // Generate Ethereum Wallet from the Derived Private Key
-            const wallet = new ethers.Wallet(privateKeyHex);
-            setWalletAddress(wallet.address);
-            setPrivateKey(privateKeyHex);
+            const ethWallet = new ethers.Wallet(privateKeyHex);
+            const keyPair = ECPair.fromPrivateKey(Buffer.from(privateKeyHex, "hex"), { compressed: true });
+            const pubkeyBuffer = Buffer.from(keyPair.publicKey);
 
-            console.log("Wallet Address (from passkey):", wallet.address);
+            const { address: btcAddress } = payments.p2wpkh({ pubkey: pubkeyBuffer });
+            const btcPrivateKeyWIF = bs58check.encode(Buffer.concat([Buffer.from([0x80]), keyPair.privateKey!]));
+
+            setWalletAddress({ eth: ethWallet.address, btc: btcAddress });
+            setPrivateKey({ eth: privateKeyHex, btc: btcPrivateKeyWIF });
+
         } catch (error) {
-            console.error("Error generating wallet from passkey:", error);
+            console.error("Error generating wallets from passkey:", error);
         }
     };
 
-    // Function to log in with an existing passkey
     const loginWithPasskey = async () => {
         try {
             const credential = await navigator.credentials.get({
@@ -80,7 +93,7 @@ export default function WalletConnection() {
         }
     };
 
-    // Function to create a new passkey and derive a wallet
+
     const generatePasskeyWallet = async () => {
         try {
             if (!email || !displayName) {
@@ -89,14 +102,14 @@ export default function WalletConnection() {
 
             const credential = await navigator.credentials.create({
                 publicKey: {
-                    challenge: new Uint8Array(32), // Random challenge
+                    challenge: new Uint8Array(32),
                     rp: { name: "Exodus Web3" },
                     user: {
                         id: new Uint8Array(16),
                         name: email,
                         displayName: displayName,
                     },
-                    pubKeyCredParams: [{ type: "public-key", alg: -7 }], // ECDSA with SHA-256
+                    pubKeyCredParams: [{ type: "public-key", alg: -7 }],
                     authenticatorSelection: { userVerification: "preferred" },
                 },
             });
@@ -113,14 +126,13 @@ export default function WalletConnection() {
 
     // Function to disconnect the wallet
     const disconnectWallet = () => {
-        setWalletAddress(null);
-        setPrivateKey(null);
-        setPrivateKey(null);
+        setWalletAddress({ eth: null, btc: null });
+        setPrivateKey({ eth: null, btc: null });
     };
 
     return (
         <div className={styles.walletContainer}>
-            {!walletAddress ? (
+            {!walletAddress.eth ? (
                 <>
                     <h3>🔑 Access Your Wallet</h3>
                     {passkeyExists ? (
@@ -136,7 +148,10 @@ export default function WalletConnection() {
                 </>
             ) : (
                 <>
-                    <p className={styles.walletAddress}>✅ Wallet: {walletAddress}</p>
+                    <p className={styles.walletAddress}>
+                        ✅ ETH Wallet: {walletAddress.eth} <br />
+                        ✅ BTC Wallet: {walletAddress.btc}
+                    </p>
 
                     <ExportWallet privateKey={privateKey} />
 
@@ -154,7 +169,7 @@ export default function WalletConnection() {
                     setEmail={setEmail}
                     displayName={displayName}
                     setDisplayName={setDisplayName}
-                    generatePasskeyWallet={() => generatePasskeyWallet(email, displayName, generateWalletFromPasskey)}
+                    generatePasskeyWallet={generatePasskeyWallet}
                 />
             )}
         </div>
