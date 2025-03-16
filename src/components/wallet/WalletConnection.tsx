@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import styles from "./WalletConnection.module.css";
 import { ethers } from "ethers"; // Ethereum wallet generation
 import { sha256 } from "@noble/hashes/sha256"; // Hashing passkey for determinism
+import ExportPasskey from "./ExportPasskey"; // Import ExportPasskey component
+import ImportPasskey from "./ImportPasskey"; // Import ImportPasskey component
 
 export default function WalletConnection() {
     const [walletAddress, setWalletAddress] = useState<string | null>(null);
@@ -125,6 +127,7 @@ export default function WalletConnection() {
                             Create Wallet
                         </button>
                     )}
+                    <ImportPasskey /> {/* Import Passkey Component Added */}
                 </>
             ) : (
                 <>
@@ -132,6 +135,7 @@ export default function WalletConnection() {
                     <button className={styles.disconnectButton} onClick={disconnectWallet}>
                         Disconnect Wallet
                     </button>
+                    <ExportPasskey /> {/* Export Passkey Component Added */}
                 </>
             )}
 

@@ -1,0 +1,64 @@
+.exportContainer {
+    background: var(--exodus-navy-blue);
+    padding: 20px;
+    border-radius: 12px;
+    color: var(--exodus-text-color);
+    text-align: center;
+    max-width: 500px;
+    margin: 20px auto;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.exportButton {
+    background: var(--exodus-purple);
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+    margin-top: 10px;
+    border: none;
+}
+
+.exportButton:hover {
+    transform: scale(1.05);
+}
+
+.exportResult {
+    margin-top: 15px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    text-align: center;
+}
+
+.exportTextArea {
+    width: 100%;
+    height: 60px;
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid var(--exodus-gray);
+    background: var(--exodus-dark-blue);
+    color: var(--exodus-text-color);
+    resize: none;
+}
+
+.exportTextArea::placeholder {
+    color: var(--exodus-light-gray);
+    opacity: 0.7;
+}
+
+/* QR Code Styling */
+.qrCodeContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 15px;
+}
+
+.qrCode {
+    padding: 10px;
+    background: white;
+    border-radius: 8px;
+}
