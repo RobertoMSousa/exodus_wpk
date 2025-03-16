@@ -1,8 +1,9 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from "./WalletConnection.module.css";
-import * as secp256k1 from "@noble/secp256k1"; // For cryptographic key generation
-import { ethers } from "ethers"; // For Ethereum wallet generation
+import * as secp256k1 from "@noble/secp256k1"; // Cryptographic key generation
+import { ethers } from "ethers"; // Ethereum wallet generation
+import { sha256 } from "@noble/hashes/sha256"; // Hashing passkey for determinism
 
 export default function WalletConnection() {
     const [walletAddress, setWalletAddress] = useState<string | null>(null);
@@ -10,14 +11,56 @@ export default function WalletConnection() {
     const [email, setEmail] = useState<string>("");
     const [displayName, setDisplayName] = useState<string>("");
 
-    // Function to create a passkey and derive a wallet
+    useEffect(() => {
+        checkExistingPasskey();
+    }, []);
+
+    // Function to check for an existing passkey and load the wallet if available
+    const checkExistingPasskey = async () => {
+        try {
+            const credential = await navigator.credentials.get({
+                publicKey: {
+                    challenge: new Uint8Array(32), // Random challenge
+                    rpId: window.location.hostname,
+                    userVerification: "preferred",
+                },
+            });
+
+            if (credential) {
+                console.log("Existing passkey found, using it for wallet generation.");
+                generateWalletFromPasskey(credential.rawId);
+            } else {
+                setShowModal(true); // Show modal if no passkey exists
+            }
+        } catch (error) {
+            console.error("Error checking existing passkey:", error);
+            setShowModal(true); // Show modal if there's an error
+        }
+    };
+
+    // Function to generate a deterministic wallet from the passkey
+    const generateWalletFromPasskey = async (passkey: ArrayBuffer) => {
+        try {
+            const hashedPasskey = sha256(new Uint8Array(passkey));
+            const privateKeyHex = Buffer.from(hashedPasskey).toString("hex").slice(0, 64);
+
+            // Generate Ethereum Wallet from the Derived Private Key
+            const wallet = new ethers.Wallet(privateKeyHex);
+            setWalletAddress(wallet.address);
+
+            console.log("Wallet Address (from passkey):", wallet.address);
+        } catch (error) {
+            console.error("Error generating wallet from passkey:", error);
+        }
+    };
+
+    // Function to create a new passkey and derive a wallet
     const generatePasskeyWallet = async () => {
         try {
             if (!email || !displayName) {
                 throw new Error("Email and Display Name are required.");
             }
 
-            // Step 1: Generate a new WebAuthn Credential (Passkey)
             const credential = await navigator.credentials.create({
                 publicKey: {
                     challenge: new Uint8Array(32), // Random challenge
@@ -34,19 +77,8 @@ export default function WalletConnection() {
 
             if (!credential) throw new Error("Failed to create credential");
 
-            // Step 2: Extract Public Key from Credential
-            const publicKey = credential.response.getPublicKey();
-            if (!publicKey) throw new Error("Public key generation failed");
-
-            // Step 3: Derive a Private Key (Simulating Passkey-Based Wallet Generation)
-            const privateKey = secp256k1.utils.randomPrivateKey();
-            const privateKeyHex = Buffer.from(privateKey).toString("hex");
-
-            // Step 4: Generate an Ethereum Wallet from the Derived Private Key
-            const wallet = new ethers.Wallet(privateKeyHex);
-            setWalletAddress(wallet.address);
-
-            console.log("Generated Wallet Address:", wallet.address);
+            console.log("New passkey created, using it for wallet generation.");
+            generateWalletFromPasskey(credential.rawId);
             setShowModal(false);
         } catch (error) {
             console.error("Error generating passkey wallet:", error);

@@ -62,6 +62,13 @@
     color: var(--exodus-text-color);
 }
 
+/* Change placeholder color */
+.inputField::placeholder {
+    color: var(--exodus-light-gray);
+    opacity: 0.7;
+}
+
+
 .modalButton, .closeButton {
     width: 100%;
     padding: 10px;
