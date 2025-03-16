@@ -1,15 +1,15 @@
 "use client";
 import { useState, useEffect } from "react";
 import styles from "./WalletConnection.module.css";
-import { ethers } from "ethers"; // Ethereum wallet generation
-import { sha256 } from "@noble/hashes/sha256"; // Hashing passkey for determinism
-import ExportPasskey from "./ExportPasskey"; // Import ExportPasskey component
-import ImportPasskey from "./ImportPasskey"; // Import ImportPasskey component
+import { ethers } from "ethers";
+import { sha256 } from "@noble/hashes/sha256";
+import ImportPasskey from "./ImportPasskey";
+import ExportWallet from "./ExportWallet"
+import WalletModal from "./WalletModal";
 
 export default function WalletConnection() {
     const [walletAddress, setWalletAddress] = useState<string | null>(null);
     const [privateKey, setPrivateKey] = useState<string | null>(null);
-    const [showPrivateKey, setShowPrivateKey] = useState<boolean>(false);
     const [showModal, setShowModal] = useState<boolean>(false);
     const [passkeyExists, setPasskeyExists] = useState<boolean>(false);
     const [email, setEmail] = useState<string>("");
@@ -115,7 +115,7 @@ export default function WalletConnection() {
     const disconnectWallet = () => {
         setWalletAddress(null);
         setPrivateKey(null);
-        setShowPrivateKey(false);
+        setPrivateKey(null);
     };
 
     return (
@@ -132,56 +132,30 @@ export default function WalletConnection() {
                             Create Wallet
                         </button>
                     )}
-                    <ImportPasskey /> {/* Import Passkey Component Added */}
+                    <ImportPasskey />
                 </>
             ) : (
                 <>
                     <p className={styles.walletAddress}>✅ Wallet: {walletAddress}</p>
 
-                    {/* Export Private Key Button */}
-                    <button className={styles.exportPrivateKeyButton} onClick={() => setShowPrivateKey(!showPrivateKey)}>
-                        {showPrivateKey ? "Hide Private Key" : "Export Private Key"}
-                    </button>
-
-                    {showPrivateKey && (
-                        <p className={styles.privateKey}>
-                            🔑 Private Key: <span>{privateKey}</span>
-                        </p>
-                    )}
+                    <ExportWallet privateKey={privateKey} />
 
                     <button className={styles.disconnectButton} onClick={disconnectWallet}>
                         Disconnect Wallet
                     </button>
-                    <ExportPasskey /> {/* Export Passkey Component Added */}
                 </>
             )}
 
             {showModal && (
-                <div className={styles.modal}>
-                    <div className={styles.modalContent}>
-                        <h3>Enter Your Details</h3>
-                        <input
-                            type="email"
-                            placeholder="Email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            className={styles.inputField}
-                        />
-                        <input
-                            type="text"
-                            placeholder="Display Name"
-                            value={displayName}
-                            onChange={(e) => setDisplayName(e.target.value)}
-                            className={styles.inputField}
-                        />
-                        <button className={styles.modalButton} onClick={generatePasskeyWallet}>
-                            Create Wallet
-                        </button>
-                        <button className={styles.closeButton} onClick={() => setShowModal(false)}>
-                            Cancel
-                        </button>
-                    </div>
-                </div>
+                <WalletModal
+                    showModal={showModal}
+                    setShowModal={setShowModal}
+                    email={email}
+                    setEmail={setEmail}
+                    displayName={displayName}
+                    setDisplayName={setDisplayName}
+                    generatePasskeyWallet={() => generatePasskeyWallet(email, displayName, generateWalletFromPasskey)}
+                />
             )}
         </div>
     );

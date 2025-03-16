@@ -1,0 +1,21 @@
+.exportContainer {
+    background: var(--exodus-navy-blue);
+    padding: 20px;
+    border-radius: 12px;
+    color: var(--exodus-text-color);
+    text-align: center;
+    max-width: 500px;
+    margin: 20px auto;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.privateKey {
+    margin-top: 10px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    word-break: break-all;
+    font-size: 16px;
+    color: var(--exodus-text-color);
+    text-align: center;
+}

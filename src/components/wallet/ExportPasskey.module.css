@@ -49,16 +49,7 @@
     opacity: 0.7;
 }
 
-/* QR Code Styling */
-.qrCodeContainer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 15px;
-}
-
-.qrCode {
-    padding: 10px;
-    background: white;
-    border-radius: 8px;
+.error {
+    color: red;
+    margin-top: 10px;
 }
