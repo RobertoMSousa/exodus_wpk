@@ -6,9 +6,15 @@ export default function Features() {
             <div className={styles.container}>
                 <h2 className={styles.title}>Powerful Web3 Developer Tools</h2>
                 <div className={styles.featureList}>
-                    <div className={styles.featureItem}>
+                    {/* <div className={styles.featureItem}>
                         <h3>🔗 Wallet Connection</h3>
                         <p>Easily connect your Exodus Wallet with our SDK and interact with blockchain networks effortlessly.</p>
+                    </div> */}
+                    <div className={styles.featureItem}>
+                        <h3>
+                            <a href="/wallet" className={styles.link}>🔑 Passkey Wallet Generator</a>
+                        </h3>
+                        <p>Securely create and access wallets using Passkeys, eliminating the need for seed phrases.</p>
                     </div>
                     <div className={styles.featureItem}>
                         <h3>⛽ Gas Fee Estimator</h3>
