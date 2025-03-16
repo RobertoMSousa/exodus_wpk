@@ -1,13 +1,13 @@
 "use client";
 import { useState, useEffect } from "react";
 import styles from "./WalletConnection.module.css";
-import * as secp256k1 from "@noble/secp256k1"; // Cryptographic key generation
 import { ethers } from "ethers"; // Ethereum wallet generation
 import { sha256 } from "@noble/hashes/sha256"; // Hashing passkey for determinism
 
 export default function WalletConnection() {
     const [walletAddress, setWalletAddress] = useState<string | null>(null);
     const [showModal, setShowModal] = useState<boolean>(false);
+    const [passkeyExists, setPasskeyExists] = useState<boolean>(false);
     const [email, setEmail] = useState<string>("");
     const [displayName, setDisplayName] = useState<string>("");
 
@@ -27,14 +27,15 @@ export default function WalletConnection() {
             });
 
             if (credential) {
-                console.log("Existing passkey found, using it for wallet generation.");
-                generateWalletFromPasskey(credential.rawId);
+                console.log("Existing passkey found, suggesting login.");
+                setPasskeyExists(true);
             } else {
-                setShowModal(true); // Show modal if no passkey exists
+                console.log("No existing passkey found, suggesting wallet creation.");
+                setPasskeyExists(false);
             }
         } catch (error) {
             console.error("Error checking existing passkey:", error);
-            setShowModal(true); // Show modal if there's an error
+            setPasskeyExists(false);
         }
     };
 
@@ -51,6 +52,26 @@ export default function WalletConnection() {
             console.log("Wallet Address (from passkey):", wallet.address);
         } catch (error) {
             console.error("Error generating wallet from passkey:", error);
+        }
+    };
+
+    // Function to log in with an existing passkey
+    const loginWithPasskey = async () => {
+        try {
+            const credential = await navigator.credentials.get({
+                publicKey: {
+                    challenge: new Uint8Array(32),
+                    rpId: window.location.hostname,
+                    userVerification: "preferred",
+                },
+            });
+
+            if (credential) {
+                console.log("Logging in with existing passkey.");
+                generateWalletFromPasskey(credential.rawId);
+            }
+        } catch (error) {
+            console.error("Error logging in with passkey:", error);
         }
     };
 
@@ -94,10 +115,16 @@ export default function WalletConnection() {
         <div className={styles.walletContainer}>
             {!walletAddress ? (
                 <>
-                    <h3>🔑 Generate a Wallet with Passkeys</h3>
-                    <button className={styles.generateButton} onClick={() => setShowModal(true)}>
-                        Generate Wallet
-                    </button>
+                    <h3>🔑 Access Your Wallet</h3>
+                    {passkeyExists ? (
+                        <button className={styles.generateButton} onClick={loginWithPasskey}>
+                            Login with Passkey
+                        </button>
+                    ) : (
+                        <button className={styles.generateButton} onClick={() => setShowModal(true)}>
+                            Create Wallet
+                        </button>
+                    )}
                 </>
             ) : (
                 <>
