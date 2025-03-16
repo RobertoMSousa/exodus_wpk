@@ -3,19 +3,28 @@ import { useState } from "react";
 import styles from "./ExportWallet.module.css";
 import ExportPasskey from "./ExportPasskey";
 
-export default function ExportWallet({ privateKey }: { privateKey: string | null }) {
-    const [showPrivateKey, setShowPrivateKey] = useState(false);
+export default function ExportWallet({ privateKey }: { privateKey: { eth: string | null; btc: string | null } }) {
+    const [showPrivateKeys, setShowPrivateKeys] = useState(false);
 
     return (
         <div className={styles.exportContainer}>
-            <button className={styles.exportPrivateKeyButton} onClick={() => setShowPrivateKey(!showPrivateKey)}>
-                {showPrivateKey ? "Hide Private Key" : "Export Private Key"}
+            <button className={styles.exportPrivateKeyButton} onClick={() => setShowPrivateKeys(!showPrivateKeys)}>
+                {showPrivateKeys ? "Hide Private Keys" : "Export Private Keys"}
             </button>
 
-            {showPrivateKey && (
-                <p className={styles.privateKey}>
-                    🔑 Private Key: <span>{privateKey}</span>
-                </p>
+            {showPrivateKeys && (
+                <div className={styles.privateKeyContainer}>
+                    {privateKey.eth && (
+                        <p className={styles.privateKey}>
+                            🔑 ETH Private Key: <span>{privateKey.eth}</span>
+                        </p>
+                    )}
+                    {privateKey.btc && (
+                        <p className={styles.privateKey}>
+                            🔑 BTC Private Key (WIF): <span>{privateKey.btc}</span>
+                        </p>
+                    )}
+                </div>
             )}
 
             <ExportPasskey />
