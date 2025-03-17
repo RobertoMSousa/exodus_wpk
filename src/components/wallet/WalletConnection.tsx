@@ -4,7 +4,7 @@ import { useWallet } from "../../context/WalletContext";
 import styles from "./WalletConnection.module.css";
 import { ethers } from "ethers";
 import { sha256 } from "@noble/hashes/sha256";
-import { networks, payments } from "bitcoinjs-lib"; // Ensure networks is imported
+import { networks, payments } from "bitcoinjs-lib";
 import ECPairFactory from "ecpair";
 import * as ecc from "tiny-secp256k1";
 import bs58check from 'bs58check'
@@ -12,7 +12,6 @@ import ImportPasskey from "./ImportPasskey";
 import ExportWallet from "./ExportWallet";
 import WalletModal from "./WalletModal";
 import WalletBalance from "./WalletBalance";
-import TransactionHistory from "../transactionHistory/transactionHistory"; // Import TransactionHistory
 
 const ECPair = ECPairFactory(ecc);
 
@@ -24,7 +23,20 @@ export default function WalletConnection() {
     const [displayName, setDisplayName] = useState<string>("");
 
     useEffect(() => {
-        checkExistingPasskey();
+        // Load wallet data from localStorage
+        const savedWallet = localStorage.getItem("walletAddress");
+        const savedPrivateKey = localStorage.getItem("privateKey");
+
+        if (savedWallet && savedPrivateKey) {
+            setWalletAddress(JSON.parse(savedWallet));
+            console.log("Loaded wallet from localStorage:", JSON.parse(savedWallet));
+            setPasskeyExists(true);
+        } else if (!walletAddress.eth) {
+            checkExistingPasskey();
+        } else {
+            console.log("Wallet already exists in context, skipping passkey check.");
+            setPasskeyExists(true);
+        }
     }, []);
 
     const checkExistingPasskey = async () => {
@@ -70,8 +82,10 @@ export default function WalletConnection() {
 
             console.log("Generated Testnet BTC Address:", btcAddress);
 
-            setWalletAddress({ eth: ethWallet.address, btc: btcAddress });
-            setPrivateKey({ eth: privateKeyHex, btc: btcPrivateKeyWIF });
+            setWalletData(
+                { eth: ethWallet.address, btc: btcAddress },
+                { eth: privateKeyHex, btc: btcPrivateKeyWIF }
+            );
 
         } catch (error) {
             console.error("Error generating wallets from passkey:", error);
