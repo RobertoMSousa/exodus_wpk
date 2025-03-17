@@ -64,13 +64,11 @@ export default function WalletConnection() {
             const keyPair = ECPair.fromPrivateKey(Buffer.from(privateKeyHex, "hex"), { compressed: true });
             const pubkeyBuffer = Buffer.from(keyPair.publicKey);
 
-            // Explicitly use Bitcoin Testnet network
             const { address: btcAddress } = payments.p2wpkh({
                 pubkey: pubkeyBuffer,
                 network: networks.testnet,
             });
 
-            // Encode WIF for Testnet (using 0xEF for Testnet)
             const btcPrivateKeyWIF = bs58check.encode(
                 Buffer.concat([Buffer.from([0xEF]), keyPair.privateKey!])
             );
