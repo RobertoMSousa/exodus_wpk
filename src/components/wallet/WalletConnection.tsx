@@ -3,13 +3,14 @@ import { useState, useEffect } from "react";
 import styles from "./WalletConnection.module.css";
 import { ethers } from "ethers";
 import { sha256 } from "@noble/hashes/sha256";
-import { payments } from "bitcoinjs-lib";
+import { networks, payments } from "bitcoinjs-lib"; // Ensure networks is imported
 import ECPairFactory from "ecpair";
 import * as ecc from "tiny-secp256k1";
 import bs58check from 'bs58check'
 import ImportPasskey from "./ImportPasskey";
 import ExportWallet from "./ExportWallet";
 import WalletModal from "./WalletModal";
+import WalletBalance from "./WalletBalance";
 
 const ECPair = ECPairFactory(ecc);
 
@@ -63,8 +64,16 @@ export default function WalletConnection() {
             const keyPair = ECPair.fromPrivateKey(Buffer.from(privateKeyHex, "hex"), { compressed: true });
             const pubkeyBuffer = Buffer.from(keyPair.publicKey);
 
-            const { address: btcAddress } = payments.p2wpkh({ pubkey: pubkeyBuffer });
-            const btcPrivateKeyWIF = bs58check.encode(Buffer.concat([Buffer.from([0x80]), keyPair.privateKey!]));
+            const { address: btcAddress } = payments.p2wpkh({
+                pubkey: pubkeyBuffer,
+                network: networks.testnet,
+            });
+
+            const btcPrivateKeyWIF = bs58check.encode(
+                Buffer.concat([Buffer.from([0xEF]), keyPair.privateKey!])
+            );
+
+            console.log("Generated Testnet BTC Address:", btcAddress);
 
             setWalletAddress({ eth: ethWallet.address, btc: btcAddress });
             setPrivateKey({ eth: privateKeyHex, btc: btcPrivateKeyWIF });
@@ -148,10 +157,7 @@ export default function WalletConnection() {
                 </>
             ) : (
                 <>
-                    <p className={styles.walletAddress}>
-                        ✅ ETH Wallet: {walletAddress.eth} <br />
-                        ✅ BTC Wallet: {walletAddress.btc}
-                    </p>
+                    <WalletBalance walletAddress={walletAddress} />
 
                     <ExportWallet privateKey={privateKey} />
 
