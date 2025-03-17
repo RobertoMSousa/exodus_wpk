@@ -16,7 +16,7 @@ import WalletBalance from "./WalletBalance";
 const ECPair = ECPairFactory(ecc);
 
 export default function WalletConnection() {
-    const { walletAddress, setWalletAddress, setPrivateKey, disconnectWallet } = useWallet();
+    const { walletAddress, setWalletAddress, disconnectWallet } = useWallet();
     const [showModal, setShowModal] = useState<boolean>(false);
     const [passkeyExists, setPasskeyExists] = useState<boolean>(false);
     const [email, setEmail] = useState<string>("");
@@ -25,9 +25,7 @@ export default function WalletConnection() {
     useEffect(() => {
         // Load wallet data from localStorage
         const savedWallet = localStorage.getItem("walletAddress");
-        const savedPrivateKey = localStorage.getItem("privateKey");
-
-        if (savedWallet && savedPrivateKey) {
+        if (savedWallet) {
             setWalletAddress(JSON.parse(savedWallet));
             console.log("Loaded wallet from localStorage:", JSON.parse(savedWallet));
             setPasskeyExists(true);
