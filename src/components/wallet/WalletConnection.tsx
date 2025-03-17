@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useWallet } from "../../context/WalletContext";
 import styles from "./WalletConnection.module.css";
 import { ethers } from "ethers";
 import { sha256 } from "@noble/hashes/sha256";
@@ -11,18 +12,12 @@ import ImportPasskey from "./ImportPasskey";
 import ExportWallet from "./ExportWallet";
 import WalletModal from "./WalletModal";
 import WalletBalance from "./WalletBalance";
+import TransactionHistory from "../transactionHistory/transactionHistory"; // Import TransactionHistory
 
 const ECPair = ECPairFactory(ecc);
 
 export default function WalletConnection() {
-    const [walletAddress, setWalletAddress] = useState<{ eth: string | null; btc: string | null }>({
-        eth: null,
-        btc: null,
-    });
-    const [privateKey, setPrivateKey] = useState<{ eth: string | null; btc: string | null }>({
-        eth: null,
-        btc: null,
-    });
+    const { walletAddress, setWalletAddress, setPrivateKey, disconnectWallet } = useWallet();
     const [showModal, setShowModal] = useState<boolean>(false);
     const [passkeyExists, setPasskeyExists] = useState<boolean>(false);
     const [email, setEmail] = useState<string>("");
@@ -133,12 +128,6 @@ export default function WalletConnection() {
         }
     };
 
-    // Function to disconnect the wallet
-    const disconnectWallet = () => {
-        setWalletAddress({ eth: null, btc: null });
-        setPrivateKey({ eth: null, btc: null });
-    };
-
     return (
         <div className={styles.walletContainer}>
             {!walletAddress.eth ? (
@@ -157,9 +146,9 @@ export default function WalletConnection() {
                 </>
             ) : (
                 <>
-                    <WalletBalance walletAddress={walletAddress} />
+                    <WalletBalance />
 
-                    <ExportWallet privateKey={privateKey} />
+                    <ExportWallet />
 
                     <button className={styles.disconnectButton} onClick={disconnectWallet}>
                         Disconnect Wallet

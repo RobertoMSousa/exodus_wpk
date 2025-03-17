@@ -1,9 +1,11 @@
 "use client";
 import { useState } from "react";
+import { useWallet } from "../../context/WalletContext"; // ✅ Import Wallet Context
 import styles from "./ExportWallet.module.css";
 import ExportPasskey from "./ExportPasskey";
 
-export default function ExportWallet({ privateKey }: { privateKey: { eth: string | null; btc: string | null } }) {
+export default function ExportWallet() {
+    const { privateKey } = useWallet(); // ✅ Load private keys from context
     const [showPrivateKeys, setShowPrivateKeys] = useState(false);
 
     return (

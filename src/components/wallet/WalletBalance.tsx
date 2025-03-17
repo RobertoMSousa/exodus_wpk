@@ -1,9 +1,11 @@
 "use client";
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
+import { useWallet } from "../../context/WalletContext";
 import styles from "./WalletBalance.module.css";
 
-export default function WalletBalance({ walletAddress }: { walletAddress: { eth: string | null; btc: string | null } }) {
+export default function WalletBalance() {
+    const { walletAddress } = useWallet();
     const [walletBalance, setWalletBalance] = useState<{ eth: string | null; btc: string | null }>({
         eth: null,
         btc: null,
