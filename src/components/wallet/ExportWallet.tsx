@@ -2,9 +2,10 @@
 import { useState } from "react";
 import styles from "./ExportWallet.module.css";
 import ExportPasskey from "./ExportPasskey";
+import { useWallet } from "../../context/WalletContext";
 
 export default function ExportWallet() {
-    // const { privateKey } = useWallet(); // ✅ Load private keys from context
+    const { privateKey } = useWallet(); // ✅ Load private keys from context
     const [showPrivateKeys, setShowPrivateKeys] = useState(false);
 
     return (

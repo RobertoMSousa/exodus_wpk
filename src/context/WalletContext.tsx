@@ -3,7 +3,9 @@ import { createContext, useContext, useState, useEffect } from "react";
 
 interface WalletContextProps {
     walletAddress: { eth: string | null; btc: string | null };
+    privateKey: { eth: string | null; btc: string | null };
     setWalletAddress: (wallet: { eth: string | null; btc: string | null }) => void;
+    setPrivateKey: (privateKey: { eth: string | null; btc: string | null }) => void;
     disconnectWallet: () => void;
 }
 
@@ -11,40 +13,45 @@ const WalletContext = createContext<WalletContextProps | undefined>(undefined);
 
 export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
     const [walletAddress, setWalletAddress] = useState<{ eth: string | null; btc: string | null }>({ eth: null, btc: null });
-    // const [privateKey, setPrivateKey] = useState<{ eth: string | null; btc: string | null }>({ eth: null, btc: null });
+    const [privateKey, setPrivateKey] = useState<{ eth: string | null; btc: string | null }>({ eth: null, btc: null });
 
     // Load wallet data from localStorage on mount
     useEffect(() => {
         const savedWallet = localStorage.getItem("walletAddress");
-        // const savedPrivateKey = localStorage.getItem("privateKey");
+        const savedPrivateKey = localStorage.getItem("privateKey");
 
-        if (savedWallet) {
+        if (savedWallet && savedWallet !== "undefined") {
             setWalletAddress(JSON.parse(savedWallet));
-            // setPrivateKey(JSON.parse(savedPrivateKey));
+        } else {
+            disconnectWallet();
+        }
+
+        if (savedPrivateKey && savedPrivateKey !== "undefined") {
+            setPrivateKey(JSON.parse(savedPrivateKey));
         }
     }, []);
 
-    // Function to update wallet state and persist to localStorage
-    const updateWallet = (addressData: { eth: string | null; btc: string | null }) => {
+    // Function to update wallet and private key, persisting to localStorage
+    const updateWallet = (addressData: { eth: string | null; btc: string | null }, privateKeyData: { eth: string | null; btc: string | null }) => {
         setWalletAddress(addressData);
-        // setPrivateKey(privateKeyData);
+        setPrivateKey(privateKeyData);
 
         // Save to localStorage
         localStorage.setItem("walletAddress", JSON.stringify(addressData));
-        // localStorage.setItem("privateKey", JSON.stringify(privateKeyData));
+        localStorage.setItem("privateKey", JSON.stringify(privateKeyData));
     };
 
     // Disconnect Wallet & Clear Local Storage
     const disconnectWallet = () => {
         setWalletAddress({ eth: null, btc: null });
-        // setPrivateKey({ eth: null, btc: null });
+        setPrivateKey({ eth: null, btc: null });
 
         localStorage.removeItem("walletAddress");
-        // localStorage.removeItem("privateKey");
+        localStorage.removeItem("privateKey");
     };
 
     return (
-        <WalletContext.Provider value={{ walletAddress, setWalletAddress: updateWallet, disconnectWallet }}>
+        <WalletContext.Provider value={{ walletAddress, privateKey, setWalletAddress: updateWallet, setPrivateKey, disconnectWallet }}>
             {children}
         </WalletContext.Provider>
     );

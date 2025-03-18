@@ -16,49 +16,26 @@ import WalletBalance from "./WalletBalance";
 const ECPair = ECPairFactory(ecc);
 
 export default function WalletConnection() {
-    const { walletAddress, setWalletAddress, disconnectWallet } = useWallet();
+    const { walletAddress, setWalletAddress, setPrivateKey, disconnectWallet } = useWallet();
     const [showModal, setShowModal] = useState<boolean>(false);
     const [passkeyExists, setPasskeyExists] = useState<boolean>(false);
     const [email, setEmail] = useState<string>("");
     const [displayName, setDisplayName] = useState<string>("");
 
     useEffect(() => {
-        // Load wallet data from localStorage
         const savedWallet = localStorage.getItem("walletAddress");
-        if (savedWallet) {
+        const savedPrivateKey = localStorage.getItem("privateKey");
+
+        if (savedWallet && savedWallet !== "undefined") {
             setWalletAddress(JSON.parse(savedWallet));
-            console.log("Loaded wallet from localStorage:", JSON.parse(savedWallet));
-            setPasskeyExists(true);
-        } else if (!walletAddress.eth) {
-            checkExistingPasskey();
         } else {
-            console.log("Wallet already exists in context, skipping passkey check.");
-            setPasskeyExists(true);
+            disconnectWallet();
+        }
+
+        if (savedPrivateKey && savedPrivateKey !== "undefined") {
+            setPrivateKey(JSON.parse(savedPrivateKey));
         }
     }, []);
-
-    const checkExistingPasskey = async () => {
-        try {
-            const credential = await navigator.credentials.get({
-                publicKey: {
-                    challenge: new Uint8Array(32),
-                    rpId: window.location.hostname,
-                    userVerification: "preferred",
-                },
-            });
-
-            if (credential) {
-                console.log("Existing passkey found, suggesting login.");
-                setPasskeyExists(true);
-            } else {
-                console.log("No existing passkey found, suggesting wallet creation.");
-                setPasskeyExists(false);
-            }
-        } catch (error) {
-            console.error("Error checking existing passkey:", error);
-            setPasskeyExists(false);
-        }
-    };
 
     const generateWalletFromPasskey = async (passkey: ArrayBuffer) => {
         try {
@@ -80,10 +57,9 @@ export default function WalletConnection() {
 
             console.log("Generated Testnet BTC Address:", btcAddress);
 
-            setWalletData(
-                { eth: ethWallet.address, btc: btcAddress },
-                { eth: privateKeyHex, btc: btcPrivateKeyWIF }
-            );
+            // ✅ Save to context and localStorage
+            setWalletAddress({ eth: ethWallet.address, btc: btcAddress });
+            setPrivateKey({ eth: privateKeyHex, btc: btcPrivateKeyWIF });
 
         } catch (error) {
             console.error("Error generating wallets from passkey:", error);
