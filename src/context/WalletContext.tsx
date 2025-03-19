@@ -51,7 +51,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     return (
-        <WalletContext.Provider value={{ walletAddress, privateKey, setWalletAddress: updateWallet, setPrivateKey, disconnectWallet }}>
+        <WalletContext.Provider value={{ walletAddress, privateKey, setWalletAddress: updateWallet, setPrivateKey: updateWallet, disconnectWallet }}>
             {children}
         </WalletContext.Provider>
     );
