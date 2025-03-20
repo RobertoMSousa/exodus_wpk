@@ -1,9 +1,10 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useWallet } from "../../context/WalletContext";
 import styles from "./WalletConnection.module.css";
 import { ethers } from "ethers";
 import { sha256 } from "@noble/hashes/sha256";
-import { networks, payments } from "bitcoinjs-lib"; // Ensure networks is imported
+import { networks, payments } from "bitcoinjs-lib";
 import ECPairFactory from "ecpair";
 import * as ecc from "tiny-secp256k1";
 import bs58check from 'bs58check'
@@ -15,22 +16,20 @@ import WalletBalance from "./WalletBalance";
 const ECPair = ECPairFactory(ecc);
 
 export default function WalletConnection() {
-    const [walletAddress, setWalletAddress] = useState<{ eth: string | null; btc: string | null }>({
-        eth: null,
-        btc: null,
-    });
-    const [privateKey, setPrivateKey] = useState<{ eth: string | null; btc: string | null }>({
-        eth: null,
-        btc: null,
-    });
+    const { walletAddress, privateKey, setWalletAddress, setPrivateKey, disconnectWallet } = useWallet();
     const [showModal, setShowModal] = useState<boolean>(false);
     const [passkeyExists, setPasskeyExists] = useState<boolean>(false);
     const [email, setEmail] = useState<string>("");
     const [displayName, setDisplayName] = useState<string>("");
 
     useEffect(() => {
-        checkExistingPasskey();
-    }, []);
+        if (!walletAddress.eth) {
+            checkExistingPasskey();
+        } else {
+            console.log("Wallet already exists in context, skipping passkey check.");
+            setPasskeyExists(true);
+        }
+    }, [walletAddress]);
 
     const checkExistingPasskey = async () => {
         try {
@@ -133,12 +132,6 @@ export default function WalletConnection() {
         }
     };
 
-    // Function to disconnect the wallet
-    const disconnectWallet = () => {
-        setWalletAddress({ eth: null, btc: null });
-        setPrivateKey({ eth: null, btc: null });
-    };
-
     return (
         <div className={styles.walletContainer}>
             {!walletAddress.eth ? (
@@ -159,7 +152,7 @@ export default function WalletConnection() {
                 <>
                     <WalletBalance walletAddress={walletAddress} />
 
-                    <ExportWallet privateKey={privateKey} />
+                    <ExportWallet />
 
                     <button className={styles.disconnectButton} onClick={disconnectWallet}>
                         Disconnect Wallet
