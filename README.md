@@ -1,36 +1,86 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Exodus Web3 Developer Dashboard
+
+This project is a **Web3 Developer Dashboard** designed to **seamlessly integrate and test crypto transactions** using the **Exodus Wallet SDK**. It provides **secure passkey authentication**, wallet management, transaction history, and gasless transactions.
+
+## Features
+
+✅ **Passkey Authentication** – Securely generate and access wallets using WebAuthn.  
+✅ **Multi-Chain Support** – Connect to **Ethereum (Sepolia), Bitcoin (Testnet), Arbitrum, and Polygon**.  
+✅ **Gasless Transactions** – Enable gas-free transactions via relayers.  
+✅ **Wallet Import & Export** – Export private keys and import existing wallets.  
+✅ **Transaction Monitoring** – View real-time transaction history.  
 
 ## Getting Started
 
-First, run the development server:
+### **1️⃣ Install Dependencies**
+Run the following command to install all necessary packages:
+```bash
+npm install
+```
 
+### **2️⃣ Start the Development Server**
+Launch the development environment with:
 ```bash
 npm run dev
 # or
 yarn dev
 # or
 pnpm dev
-# or
-bun dev
+```
+The project will be available at **[http://localhost:3000](http://localhost:3000)**.
+
+## **Project Structure**
+```
+/src
+ ├── /app
+ │    ├── page.tsx         # Landing Page
+ │    ├── layout.tsx       # App Layout (includes WalletProvider)
+ │    ├── /wallet          # Wallet-related pages
+ │    ├── /tx              # Transaction history page
+ │
+ ├── /components
+ │    ├── /wallet
+ │    │    ├── WalletConnection.tsx   # Handles wallet connection via passkeys
+ │    │    ├── ExportWallet.tsx       # Allows private key export
+ │    │    ├── WalletBalance.tsx      # Displays ETH & BTC wallet balances
+ │    │    ├── TransactionHistory.tsx # Displays past transactions
+ │
+ ├── /context
+ │    ├── WalletContext.tsx # React Context for wallet state management
+ │
+ ├── /styles
+ │    ├── globals.css       # Global styles
+ │    ├── wallet.module.css # Wallet-related styles
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## **Environment Variables**
+Create a `.env.local` file and set up required API keys:
+```
+NEXT_PUBLIC_QUICKNODE_URL="YOUR_QUICKNODE_ENDPOINT"
+NEXT_PUBLIC_ETHERSCAN_API_KEY="YOUR_ETHERSCAN_KEY"
+NEXT_PUBLIC_BLOCKCYPHER_API="YOUR_BLOCKCYPHER_KEY"
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## **Deploying the Project**
+To deploy the project on **Vercel**, run:
+```bash
+vercel
+```
+Or, for a manual deployment, build the project with:
+```bash
+npm run build
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## **Contributing**
+We welcome contributions! Please submit pull requests for bug fixes, features, or improvements.
 
-## Learn More
+## **License**
+This project is licensed under **MIT**.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### **🔹 Additional Resources**
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Exodus Wallet SDK](https://www.exodus.com/)
+- [QuickNode API](https://www.quicknode.com/)
+- [Ethers.js Documentation](https://docs.ethers.io/)
