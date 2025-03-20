@@ -56,9 +56,6 @@ The project will be available at **[http://localhost:3000](http://localhost:3000
 ## **Environment Variables**
 Create a `.env.local` file and set up required API keys:
 ```
-NEXT_PUBLIC_QUICKNODE_URL="YOUR_QUICKNODE_ENDPOINT"
-NEXT_PUBLIC_ETHERSCAN_API_KEY="YOUR_ETHERSCAN_KEY"
-NEXT_PUBLIC_BLOCKCYPHER_API="YOUR_BLOCKCYPHER_KEY"
 ```
 
 ## **Deploying the Project**
