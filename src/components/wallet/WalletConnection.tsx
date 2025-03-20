@@ -4,7 +4,7 @@ import { useWallet } from "../../context/WalletContext";
 import styles from "./WalletConnection.module.css";
 import { ethers } from "ethers";
 import { sha256 } from "@noble/hashes/sha256";
-import { networks, payments } from "bitcoinjs-lib"; // Ensure networks is imported
+import { networks, payments } from "bitcoinjs-lib";
 import ECPairFactory from "ecpair";
 import * as ecc from "tiny-secp256k1";
 import bs58check from 'bs58check'
@@ -16,7 +16,7 @@ import WalletBalance from "./WalletBalance";
 const ECPair = ECPairFactory(ecc);
 
 export default function WalletConnection() {
-    const { walletAddress, privateKey, setWalletAddress, setPrivateKey, disconnectWallet } = useWallet(); // Updated to include privateKey
+    const { walletAddress, privateKey, setWalletAddress, setPrivateKey, disconnectWallet } = useWallet();
     const [showModal, setShowModal] = useState<boolean>(false);
     const [passkeyExists, setPasskeyExists] = useState<boolean>(false);
     const [email, setEmail] = useState<string>("");
