@@ -9,7 +9,7 @@ export default function ExportPasskey() {
     // Function to export the user's passkey
     const exportPasskey = async () => {
         try {
-            const credential = await navigator.credentials.get({
+            const cred = await navigator.credentials.get({
                 publicKey: {
                     challenge: new Uint8Array(32),
                     rpId: window.location.hostname,
@@ -17,9 +17,11 @@ export default function ExportPasskey() {
                 },
             });
 
-            if (!credential) {
-                throw new Error("No passkey found. Please ensure you have one created.");
+            if (!cred || cred.type !== "public-key") {
+                throw new Error("No valid passkey found. Please ensure you have one created.");
             }
+
+            const credential = cred as PublicKeyCredential;
 
             // Convert passkey to Base64 for easier transfer
             const exportedKeyBase64 = btoa(String.fromCharCode(...new Uint8Array(credential.rawId)));

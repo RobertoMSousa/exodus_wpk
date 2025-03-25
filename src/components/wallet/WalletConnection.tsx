@@ -1,9 +1,10 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useWallet } from "../../context/WalletContext";
 import styles from "./WalletConnection.module.css";
 import { ethers } from "ethers";
 import { sha256 } from "@noble/hashes/sha256";
-import { networks, payments } from "bitcoinjs-lib"; // Ensure networks is imported
+import { networks, payments } from "bitcoinjs-lib";
 import ECPairFactory from "ecpair";
 import * as ecc from "tiny-secp256k1";
 import bs58check from 'bs58check'
@@ -15,22 +16,20 @@ import WalletBalance from "./WalletBalance";
 const ECPair = ECPairFactory(ecc);
 
 export default function WalletConnection() {
-    const [walletAddress, setWalletAddress] = useState<{ eth: string | null; btc: string | null }>({
-        eth: null,
-        btc: null,
-    });
-    const [privateKey, setPrivateKey] = useState<{ eth: string | null; btc: string | null }>({
-        eth: null,
-        btc: null,
-    });
+    const { walletAddress, setWalletAddress, setPrivateKey, disconnectWallet } = useWallet();
     const [showModal, setShowModal] = useState<boolean>(false);
     const [passkeyExists, setPasskeyExists] = useState<boolean>(false);
     const [email, setEmail] = useState<string>("");
     const [displayName, setDisplayName] = useState<string>("");
 
     useEffect(() => {
-        checkExistingPasskey();
-    }, []);
+        if (!walletAddress.eth) {
+            checkExistingPasskey();
+        } else {
+            console.log("Wallet already exists in context, skipping passkey check.");
+            setPasskeyExists(true);
+        }
+    }, [walletAddress]);
 
     const checkExistingPasskey = async () => {
         try {
@@ -75,7 +74,7 @@ export default function WalletConnection() {
 
             console.log("Generated Testnet BTC Address:", btcAddress);
 
-            setWalletAddress({ eth: ethWallet.address, btc: btcAddress });
+            setWalletAddress({ eth: ethWallet.address, btc: btcAddress ?? null });
             setPrivateKey({ eth: privateKeyHex, btc: btcPrivateKeyWIF });
 
         } catch (error) {
@@ -93,9 +92,10 @@ export default function WalletConnection() {
                 },
             });
 
-            if (credential) {
+            if (credential && credential.type === "public-key") {
                 console.log("Logging in with existing passkey.");
-                generateWalletFromPasskey(credential.rawId);
+                const publicKeyCredential = credential as PublicKeyCredential;
+                generateWalletFromPasskey(publicKeyCredential.rawId);
             }
         } catch (error) {
             console.error("Error logging in with passkey:", error);
@@ -126,17 +126,15 @@ export default function WalletConnection() {
             if (!credential) throw new Error("Failed to create credential");
 
             console.log("New passkey created, using it for wallet generation.");
-            generateWalletFromPasskey(credential.rawId);
+            if (credential && credential.type === "public-key") {
+                const publicKeyCredential = credential as PublicKeyCredential;
+                generateWalletFromPasskey(publicKeyCredential.rawId);
+            }
+
             setShowModal(false);
         } catch (error) {
             console.error("Error generating passkey wallet:", error);
         }
-    };
-
-    // Function to disconnect the wallet
-    const disconnectWallet = () => {
-        setWalletAddress({ eth: null, btc: null });
-        setPrivateKey({ eth: null, btc: null });
     };
 
     return (
@@ -159,7 +157,7 @@ export default function WalletConnection() {
                 <>
                     <WalletBalance walletAddress={walletAddress} />
 
-                    <ExportWallet privateKey={privateKey} />
+                    <ExportWallet />
 
                     <button className={styles.disconnectButton} onClick={disconnectWallet}>
                         Disconnect Wallet
