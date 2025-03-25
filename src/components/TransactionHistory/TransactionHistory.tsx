@@ -26,7 +26,6 @@ export default function TransactionHistory() {
             if (walletAddress.eth) {
                 const ethResponse = await fetch(`${ETHER_SCAN_URL}/v2/api?chainid=${chainId}&module=account&action=txlist&address=${walletAddress.eth}&startblock=0&endblock=99999999&sort=desc&apikey=${ETHER_SCAN_API_KEY}`);
                 const ethData = await ethResponse.json();
-                console.log("🚀  roberto --  ~ fetchTransactionHistory ~ ethData:", ethData)
                 if (ethData.status === "1" && ethData.result) {
                     ethTxs = ethData.result.map((tx: any) => ({
                         hash: tx.hash,
@@ -41,7 +40,6 @@ export default function TransactionHistory() {
             if (walletAddress.btc) {
                 const btcResponse = await fetch(`${BLOCKCYPHER_BTC_URL}/${walletAddress.btc}`);
                 const btcData = await btcResponse.json();
-                console.log("🚀  roberto --  ~ fetchTransactionHistory ~ btcData:", btcData)
                 if (btcData.txrefs) {
                     btcTxs = btcData.txrefs.map((tx: any) => ({
                         hash: tx.tx_hash,
