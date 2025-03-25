@@ -18,31 +18,23 @@ export default function TransactionHistory() {
             let ethTxs: any[] = [];
             let btcTxs: any[] = [];
 
-            const QUICKNODE_ETH_URL = "https://thrilling-late-morning.ethereum-sepolia.quiknode.pro/007834c3ceb39f62ff46f3a69b32f39fe1893623";
-            const BLOCKCYPHER_BTC_URL = "https://api.blockcypher.com/v1/btc/test3/addrs";
+            const BLOCKCYPHER_BTC_URL = process.env.NEXT_PUBLIC_BLOCKCYPHER_URL!;
+            const ETHER_SCAN_URL = process.env.NEXT_PUBLIC_ETHERSCAN_URL!;
+            const ETHER_SCAN_API_KEY = process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY!;
+            const chainId = process.env.NEXT_PUBLIC_CHAIN_ID!;
 
-            // Fetch Ethereum Transactions (Sepolia Testnet) from QuickNode
+            // Fetch Ethereum Transactions (Sepolia Testnet) from Etherscan
             if (walletAddress.eth) {
-                const ethResponse = await fetch(QUICKNODE_ETH_URL, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        jsonrpc: "2.0",
-                        id: 1,
-                        method: "eth_getBlockByNumber",
-                        params: ["latest", true]
-                    }),
-                });
+                const ethResponse = await fetch(`${ETHER_SCAN_URL}/v2/api?chainid=${chainId}&module=account&action=txlist&address=${walletAddress.eth}&startblock=0&endblock=99999999&sort=desc&apikey=${ETHER_SCAN_API_KEY}`);
                 const ethData = await ethResponse.json();
-                if (ethData.result?.transactions) {
-                    ethTxs = ethData.result.transactions
-                        .filter((tx: any) => tx.from === walletAddress.eth || tx.to === walletAddress.eth)
-                        .map((tx: any) => ({
-                            hash: tx.hash,
-                            amount: `${(parseInt(tx.value, 16) / 1e18).toFixed(6)} ETH`,
-                            date: new Date().toLocaleString(), // QuickNode does not provide timestamp directly
-                            status: tx.blockNumber ? "Confirmed" : "Pending",
-                        }));
+                console.log("🚀  roberto --  ~ fetchTransactionHistory ~ ethData:", ethData)
+                if (ethData.status === "1" && ethData.result) {
+                    ethTxs = ethData.result.map((tx: any) => ({
+                        hash: tx.hash,
+                        amount: `${(parseInt(tx.value) / 1e18).toFixed(6)} ETH`,
+                        date: new Date(parseInt(tx.timeStamp) * 1000).toLocaleString(),
+                        status: tx.confirmations > 0 ? "Confirmed" : "Pending",
+                    }));
                 }
             }
 
