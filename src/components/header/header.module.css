@@ -96,7 +96,7 @@
     }
 }
 
-.nav ul {
+.burger ul {
     list-style: none;
     display: grid; /* Updated to grid for vertical layout */
     gap: 24px;
