@@ -25,7 +25,9 @@ export default function Features() {
                         <p>Leverage relayers to send transactions without gas fees—great for onboarding new users.</p>
                     </div>
                     <div className={styles.featureItem}>
-                        <h3>📊 Transaction History</h3>
+                        <h3>
+                            <a href="/tx" className={styles.link}>📊 Transaction History</a>
+                        </h3>
                         <p>Monitor and track all transactions in real-time, with instant updates on status and gas costs.</p>
                     </div>
                 </div>

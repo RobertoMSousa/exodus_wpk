@@ -16,7 +16,7 @@ import WalletBalance from "./WalletBalance";
 const ECPair = ECPairFactory(ecc);
 
 export default function WalletConnection() {
-    const { walletAddress, privateKey, setWalletAddress, setPrivateKey, disconnectWallet } = useWallet();
+    const { walletAddress, setWalletAddress, setPrivateKey, disconnectWallet } = useWallet();
     const [showModal, setShowModal] = useState<boolean>(false);
     const [passkeyExists, setPasskeyExists] = useState<boolean>(false);
     const [email, setEmail] = useState<string>("");
@@ -74,7 +74,7 @@ export default function WalletConnection() {
 
             console.log("Generated Testnet BTC Address:", btcAddress);
 
-            setWalletAddress({ eth: ethWallet.address, btc: btcAddress });
+            setWalletAddress({ eth: ethWallet.address, btc: btcAddress ?? null });
             setPrivateKey({ eth: privateKeyHex, btc: btcPrivateKeyWIF });
 
         } catch (error) {
@@ -92,9 +92,10 @@ export default function WalletConnection() {
                 },
             });
 
-            if (credential) {
+            if (credential && credential.type === "public-key") {
                 console.log("Logging in with existing passkey.");
-                generateWalletFromPasskey(credential.rawId);
+                const publicKeyCredential = credential as PublicKeyCredential;
+                generateWalletFromPasskey(publicKeyCredential.rawId);
             }
         } catch (error) {
             console.error("Error logging in with passkey:", error);
@@ -125,7 +126,11 @@ export default function WalletConnection() {
             if (!credential) throw new Error("Failed to create credential");
 
             console.log("New passkey created, using it for wallet generation.");
-            generateWalletFromPasskey(credential.rawId);
+            if (credential && credential.type === "public-key") {
+                const publicKeyCredential = credential as PublicKeyCredential;
+                generateWalletFromPasskey(publicKeyCredential.rawId);
+            }
+
             setShowModal(false);
         } catch (error) {
             console.error("Error generating passkey wallet:", error);
