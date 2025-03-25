@@ -48,7 +48,6 @@
     color: var(--exodus-purple);
 }
 
-
 .burger {
     display: none; /* Hide by default */    
 }
@@ -84,13 +83,6 @@
         transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
         opacity: 0;
         transform: translateY(-10px);
-        ul {
-            list-style: none;
-            display: grid; /* Updated to grid for vertical layout */
-            gap: 24px;
-            margin: 0;
-            padding: 0;
-        }
     }
 
     /* When menuOpen is true, show navigation */
@@ -101,6 +93,13 @@
         gap: 16px;
         opacity: 1;
         transform: translateY(0);
-        
     }
+}
+
+.nav ul {
+    list-style: none;
+    display: grid; /* Updated to grid for vertical layout */
+    gap: 24px;
+    margin: 0;
+    padding: 0;
 }
