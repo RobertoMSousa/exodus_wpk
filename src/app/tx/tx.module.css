@@ -1,0 +1,26 @@
+.walletSection {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    background: linear-gradient(180deg, var(--exodus-dark-blue) 0%, var(--exodus-purple) 100%);
+    color: var(--exodus-text-color);
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.walletContainer {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.walletTitle {
+    font-size: 40px;
+    font-weight: bold;
+    margin-bottom: 16px;
+}
+
+.walletSubtitle {
+    font-size: 18px;
+    opacity: 0.9;
+    margin-bottom: 24px;
+}
