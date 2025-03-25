@@ -4,7 +4,7 @@ import { useWallet } from "../../context/WalletContext"
 import styles from "./TransactionHistory.module.css";
 
 export default function TransactionHistory() {
-    const { walletAddress } = useWallet(); // ✅ Now inside TransactionHistory.tsx
+    const { walletAddress } = useWallet();
     const [transactions, setTransactions] = useState<{ eth: any[]; btc: any[] }>({ eth: [], btc: [] });
 
     useEffect(() => {
@@ -23,7 +23,6 @@ export default function TransactionHistory() {
             const ETHER_SCAN_API_KEY = process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY!;
             const chainId = process.env.NEXT_PUBLIC_CHAIN_ID!;
 
-            // Fetch Ethereum Transactions (Sepolia Testnet) from Etherscan
             if (walletAddress.eth) {
                 const ethResponse = await fetch(`${ETHER_SCAN_URL}/v2/api?chainid=${chainId}&module=account&action=txlist&address=${walletAddress.eth}&startblock=0&endblock=99999999&sort=desc&apikey=${ETHER_SCAN_API_KEY}`);
                 const ethData = await ethResponse.json();
@@ -38,7 +37,7 @@ export default function TransactionHistory() {
                 }
             }
 
-            // Fetch Bitcoin Transactions (Testnet) from BlockCypher
+
             if (walletAddress.btc) {
                 const btcResponse = await fetch(`${BLOCKCYPHER_BTC_URL}/${walletAddress.btc}`);
                 const btcData = await btcResponse.json();

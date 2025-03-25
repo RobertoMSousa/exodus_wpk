@@ -1,5 +1,4 @@
 import Header from "../../components/header/header";
-import WalletConnection from "../../components/wallet/WalletConnection";
 import TransactionHistory from "../../components/TransactionHistory/TransactionHistory";
 import styles from "./tx.module.css"; // Importing new styles
 
@@ -15,11 +14,9 @@ export default function TransactionHistoryPage() {
                             View your latest Ethereum and Bitcoin transactions. Connect your wallet to access real-time transaction history.
                         </p>
                         <TransactionHistory />
-                        {/* <WalletConnection /> */}
                     </div>
                 </section>
 
-                {/* ✅ Transaction History Component now fully self-contained */}
             </main>
         </div>
     );
