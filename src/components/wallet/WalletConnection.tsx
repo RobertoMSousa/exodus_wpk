@@ -112,7 +112,7 @@ export default function WalletConnection() {
             const credential = await navigator.credentials.create({
                 publicKey: {
                     challenge: new Uint8Array(32),
-                    rp: { name: "Exodus Web3" },
+                    rp: { name: "Web3" },
                     user: {
                         id: new Uint8Array(16),
                         name: email,
