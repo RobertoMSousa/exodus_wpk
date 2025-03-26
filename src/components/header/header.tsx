@@ -11,7 +11,7 @@ export default function Header() {
         <header className={styles.header}>
             <div className={styles.container}>
                 <Link href="/" className={styles.logo}>
-                    <h1>Exodus Web3 Dashboard</h1>
+                    <h1>Web3 Test Dashboard</h1>
                 </Link>
 
                 {/* Burger Menu Button */}

@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Exodus",
-  description: "Exodus app",
+  title: "Sample",
+  description: "Sample app",
 };
 
 
